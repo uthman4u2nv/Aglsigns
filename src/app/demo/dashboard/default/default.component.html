@@ -1,0 +1,292 @@
+<div class="row">
+  <div class="col-md-6 col-xl-3">
+    <app-card [showHeader]="false" blockClass="dashboard-card">
+      <h6 class="mb-2 f-w-400 text-muted">Total Sites/Locations</h6>
+      <h4 class="mb-3">
+        {{ totalSites }}
+        <!--<span class="badge bg-light-primary border border-primary ">
+          <i antIcon type="rise" theme="outline"></i>
+          Add Sites
+        </span>-->
+      </h4>
+    <p class="mb-0 text-muted text-sm">
+    
+      <span class="text-primary">Manage Location</span>
+    
+    </p>
+    </app-card>
+  </div>
+
+  <div class="col-md-6 col-xl-3">
+    <app-card [showHeader]="false" blockClass="dashboard-card">
+      <h6 class="mb-2 f-w-400 text-muted">Total Customers</h6>
+      <h4 class="mb-3">
+        {{ totalCustomers }}
+        <!--<span class="badge bg-light-primary border border-primary ">
+          <i antIcon type="rise" theme="outline"></i>
+          Add Customer
+        </span>-->
+      </h4>
+      <p class="mb-0 text-muted text-sm">
+        
+        <span class="text-primary">Manage Customers</span>
+        
+      </p>
+    </app-card>
+  </div>
+
+  <div class="col-md-6 col-xl-3">
+    <app-card [showHeader]="false" blockClass="dashboard-card">
+      <h6 class="mb-2 f-w-400 text-muted">Total Reservation</h6>
+      <h4 class="mb-3">
+        {{ totalBookings }}
+       <!-- <span class="badge bg-light-primary border border-primary ">
+          <i antIcon type="rise" theme="outline"></i>
+          
+        </span>-->
+      </h4>
+      <p class="mb-0 text-muted text-sm">
+       
+        <span class="text-primary">Manage Reservations</span>
+       
+      </p>
+    </app-card>
+  </div>
+
+  <div class="col-md-6 col-xl-3">
+    <app-card [showHeader]="false" blockClass="dashboard-card">
+      <h6 class="mb-2 f-w-400 text-muted">Total Transaction</h6>
+      <h4 class="mb-3">
+        N29,700,000.00
+        <!--<span class="badge bg-light-primary border border-primary ">
+          <i antIcon type="rise" theme="outline"></i>
+          59.3%
+        </span>-->
+      </h4>
+      <p class="mb-0 text-muted text-sm">
+        
+        <span class="text-primary">Manage Transactions</span>
+        <!-- Button trigger modal -->
+        <!--<button type="button" class="btn btn-primary" (click)="open()">
+          Launch demo modal
+        </button>-->
+        
+        
+      </p>
+    </app-card>
+  </div>
+
+  <!--@for (analytic of AnalyticEcommerce; track analytic) {
+    <div class="col-md-6 col-xl-3">
+      <app-card [showHeader]="false" blockClass="dashboard-card">
+        <h6 class="mb-2 f-w-400 text-muted">{{ analytic.title }}</h6>
+        <h4 class="mb-3">
+          {{ analytic.amount }}
+          <span class="badge {{ analytic.background }} border {{ analytic.border }} ">
+            <i antIcon type="{{ analytic.icon }}" theme="outline"></i>
+            {{ analytic.percentage }}
+          </span>
+        </h4>
+        <p class="mb-0 text-muted text-sm">
+          You made an extra
+          <span class="{{ analytic.color }}">{{ analytic.number }}</span>
+          this year
+        </p>
+      </app-card>
+    </div>
+  }-->
+  <!--<div class="col-md-12 col-xl-8">
+    <app-monthly-bar-chart />
+  </div>
+  <div class="col-md-12 col-xl-4">
+    <app-income-overview-chart />
+  </div>-->
+
+  <div class="col-md-12 col-xl-8">
+    <div class="row">
+      <div class="col-6"><h5 class="mb-3">Sites/Locations</h5></div>
+      <div class="col-6">
+        <h5 class="text-end">View All Locations</h5>
+      </div>
+    </div>
+    
+    
+    <div class="card tbl-card">
+      <div class="table-responsive">
+        <table class="table table-hover mb-0">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>NAME.</th>
+              <!--<th>ADDRESS</th>-->
+              <th>SIZE</th>
+              <th>GPS</th>
+              <th class="text-end">PRICE</th>
+              <th class="text-end">STATUS</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (s of sites; track s; let i=$index) {
+              <tr>
+                <td>{{i+1}}</td>
+                <td>
+                  <a href="javascript:" (click)="OpenLocationDetails(s.sitename,s.address,s.size,s.gps,s.price,s.status,s.created_at)" class="text-muted">{{ s.sitename }}</a>
+                </td>
+                <!--<td>{{ s.address }}</td>-->
+                <td>
+                  <span class="d-block">
+                    <i class="badge-circle {{ s.status_type }} f-10 m-r-5"></i>
+                    {{ s.size }}
+                  </span>
+                </td>
+                <td>
+                  <span class="d-block">
+                    <i class="badge-circle {{ s.status_type }} f-10 m-r-5"></i>
+                    {{ s.gps }}
+                  </span>
+                </td>
+                <td class="text-end">{{ s.price | currency:'N'}}</td>
+                <td class="text-end">
+                  @if(s.status===1){
+                    <div style="background-color: green !important;color: white; padding: 5px;">Available</div>
+                  }
+                  @if(s.status===0){
+                    <div style="background-color: red !important;color: white; padding: 5px;">Unavailable</div>
+                  }
+                  @if(s.status===2){
+                  <div style="background-color: yellow !important;color: black; padding: 5px;" >Occupied</div>
+                  }
+                  
+                 </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-12 col-xl-4">
+    <h5 class="mb-3">Transaction History</h5>
+    <div class="card">
+      <div class="list-group list-group-flush">
+        @for (b of last5bookings; track b) {
+        <a href="javascript:" class="list-group-item list-group-item-action px-3">
+          <div class="d-flex">
+            <div class="flex-shrink-0">
+              <div class="avatar avatar-s rounded-circle text-success bg-light-success">
+                <i class="f-16" antIcon type="gift" theme="outline"></i>
+              </div>
+            </div>
+            <div class="flex-grow-1 ms-3">
+              <h6 class="mb-1">{{b.customers.name}}</h6>
+              <p class="mb-0 text-muted">{{ b.created_at | date:'medium' }}</p>
+            </div>
+            <div class="flex-shrink-0 text-end">
+              <h6 class="mb-1">{{ b.paid | currency:'N'}}</h6>
+              <!--<p class="mb-0 text-muted">{{ history.percentage }}</p>-->
+            </div>
+          </div>
+        </a>
+        }
+      </div>
+    </div>
+    <!--<div class="card">
+      <div class="card-body">
+        <div class="row justify-content-between">
+          <div class="col-auto">
+            <h5>Help & Support Chat</h5>
+            <p class="mb-3">Typical replay within 5 min</p>
+          </div>
+          <div class="col-auto">
+            <div class="user-group mb-3">
+              <img src="assets/images/user/avatar-1.jpg" alt="image" />
+              <img src="assets/images/user/avatar-2.jpg" alt="image" />
+              <img src="assets/images/user/avatar-3.jpg" alt="image" />
+            </div>
+          </div>
+        </div>
+        <div class="d-grid">
+          <div class="btn btn-primary">Need Help?</div>
+        </div>
+      </div>
+    </div>-->
+  </div>
+  <!--
+  <div class="col-md-12 col-xl-8">
+    <h5 class="mb-3">Sites/Locations</h5>
+    <div class="card tbl-card">
+      <div class="table-responsive">
+        <table class="table table-hover mb-0">
+          <thead>
+            <tr>
+              <th>TRACKING NO.</th>
+              <th>PRODUCT NAME</th>
+              <th>STATUS</th>
+              <th class="text-end">TOTAL ORDER</th>
+              <th class="text-end">TOTAL AMOUNT</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (order of recentOrder; track order) {
+              <tr>
+                <td>
+                  <a href="javascript:" class="text-muted">{{ order.id }}</a>
+                </td>
+                <td>{{ order.name }}</td>
+                <td>
+                  <span class="d-block">
+                    <i class="badge-circle {{ order.status_type }} f-10 m-r-5"></i>
+                    {{ order.status }}
+                  </span>
+                </td>
+                <td class="text-end">{{ order.quantity }}</td>
+                <td class="text-end">{{ order.amount }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+-->
+ 
+
+  <!--<div class="col-md-12 col-xl-8">
+    <app-sales-report-chart />
+  </div>
+  <div class="col-md-12 col-xl-4">
+    <app-analytics-chart />
+  </div>-->
+  
+  <!-- [ sample-page ] end -->
+</div>
+<dialog id="dialog" #modal>
+  <h3>{{name}}</h3>
+  <hr />
+  <div class="table-responsive">
+<table class="table table-bordered table-hover">
+  <tr>
+    <td>Date Created</td>
+    <td>{{date | date:'medium'}}</td>
+  </tr>
+  <tr>
+    <td>Address</td>
+    <td>{{address}}</td>
+  </tr>
+  <tr>
+    <td>Size</td>
+    <td>{{size}}</td>
+  </tr>
+  <tr>
+    <td>Price</td>
+    <td>{{price | currency:'N'}}</td>
+  </tr>
+</table>
+  </div>
+  
+  <google-map height="400px" width="100%" [center]="center" [zoom]="zoom">
+  </google-map>
+
+  <button (click)="close()">Close</button>
+</dialog>

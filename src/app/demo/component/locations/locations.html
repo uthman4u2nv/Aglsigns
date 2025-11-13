@@ -1,0 +1,242 @@
+<div class="row">
+    <!-- [ Typography ] start -->
+    <div class="col-sm-12">
+        <app-card cardTitle="Sites/Locations">
+            <div class="row g-1">
+                <div class="row">
+                    <div class="col-6"></div>
+                    <div class="col-6 text-end"><a href="javascript:" (click)="OpenLocationDetails()" class="btn btn-success">+ Add Location</a></div>
+                </div>
+                
+                <div class="col-md-12 mb-3">
+                    
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>NAME.</th>
+                                    <!--<th>ADDRESS</th>-->
+                                    <th>SIZE</th>
+                                    <th>GPS</th>
+                                    <th class="text-end">PRICE</th>
+                                    <th class="text-end">STATUS</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @for (s of sites; track s; let i=$index) {
+                                <tr>
+                                    <td>{{i+1}}</td>
+                                    <td>
+                                        <a href="javascript:"
+                                            (click)="OpenEdit(s.sitename,s.address,s.size,s.gps,s.price,s.status,s.siteid)"
+                                            class="text-muted">{{ s.sitename }}</a>
+                                           <!-- <a href="javascript:" class="text-muted">{{ s.sitename }}</a>-->
+                                    </td>
+                                    <!--<td>{{ s.address }}</td>-->
+                                    <td>
+                                        <span class="d-block">
+                                            <i class="badge-circle {{ s.status_type }} f-10 m-r-5"></i>
+                                            {{ s.size }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="d-block">
+                                            <i class="badge-circle {{ s.status_type }} f-10 m-r-5"></i>
+                                            {{ s.gps }}
+                                        </span>
+                                    </td>
+                                    <td class="text-end">{{ s.price | currency:'N'}}</td>
+                                    <td class="text-end">
+                                        @if(s.status===1){
+                                        <div style="background-color: green !important;color: white; padding: 5px;">Available</div>
+                                        }
+                                        @if(s.status===0){
+                                        <div style="background-color: red !important;color: white; padding: 5px;">Unavailable</div>
+                                        }
+                                        @if(s.status===2){
+                                        <div style="background-color: yellow !important;color: black; padding: 5px;">Occupied</div>
+                                        }
+                    
+                                    </td>
+                                </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </app-card>
+      
+    </div>
+    <!-- [ Typography ] end -->
+</div>
+<dialog id="dialog" #modal>
+    <h4 class="text-center text-primary mb-4 fw-semibold">
+        Add New Location
+    </h4>
+    
+    <form [formGroup]="siteForm" (ngSubmit)="submitForm()">
+        <div class="mb-3">
+            <label class="form-label">Site Name</label>
+            <input type="text" class="form-control" formControlName="sitename" name="sitename"
+                placeholder="Enter site name" />
+                <div class="text-danger small" *ngIf="f.sitename.touched && f.sitename.invalid">
+                    Site name is required.
+                </div>
+        </div>
+    
+        <div class="mb-3">
+            <label class="form-label">Address</label>
+            <textarea class="form-control" formControlName="address" name="address" rows="2" 
+                placeholder="Enter full address"></textarea>
+                <div class="text-danger small" *ngIf="f.address.touched && f.address.invalid">
+                    Address must be at least 5 characters.
+                </div>
+        </div>
+    
+        <div class="mb-3">
+            <label class="form-label">Size (in sq m)</label>
+            <input type="text" class="form-control" formControlName="size" name="size" placeholder="e.g. 250"  />
+            <div class="text-danger small" *ngIf="f.size.touched && f.size.invalid">
+                Size must be greater than 0.
+            </div>
+        </div>
+    
+        <div class="mb-3">
+            <label class="form-label">GPS Coordinates</label>
+            <input type="text" class="form-control" formControlName="gps"  name="gps" placeholder="e.g. 9.0765, 7.3986"
+                />
+                
+<div class="text-danger small" *ngIf="f.size.touched && f.size.invalid">
+    GPS is required.
+</div>
+                
+                
+        </div>
+    
+    <div class="mb-3">
+        <label class="form-label">Status</label>
+        <select class="form-select" formControlName="status">
+            <option value="" disabled>Select status</option>
+            <option value="1">Active</option>
+            <option value="0">Inactive</option>
+            
+        </select>
+        <div class="text-danger small" *ngIf="f.status.touched && f.status.invalid">
+            Status is required.
+        </div>
+    </div>
+    
+    <div class="mb-4">
+        <label class="form-label">Price (₦)</label>
+        <input type="number" class="form-control" formControlName="price" placeholder="Enter price" />
+        <div class="text-danger small" *ngIf="f.price.touched && f.price.invalid">
+            Price must be 0 or higher.
+        </div>
+    </div>
+    
+        <button type="submit" class="btn btn-primary w-100" [disabled]="loading">
+            <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
+            {{ loading ? 'Saving...' : 'Submit' }}
+        </button>
+    </form>
+
+    
+    
+    <div class="text-center mt-3">
+        <small class="text-success">{{ message }}</small>
+    </div>
+
+
+
+
+   
+<hr />
+    <button class="text-end" (click)="close()">Close</button>
+</dialog>
+
+<dialog id="dialog" #editmodal>
+    <h4 class="text-center text-primary mb-4 fw-semibold">
+        Edit Location
+    </h4>
+
+    <form [formGroup]="editSiteForm" (ngSubmit)="updateForm()">
+        <div class="mb-3">
+            <label class="form-label">Site Name</label>
+            <input type="text" class="form-control" formControlName="sitename" name="sitename"
+                placeholder="Enter site name" />
+            <div class="text-danger small" *ngIf="e.sitename.touched && e.sitename.invalid">
+                Site name is required.
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Address</label>
+            <textarea class="form-control" formControlName="address" name="address" rows="2"
+                placeholder="Enter full address"></textarea>
+            <div class="text-danger small" *ngIf="e.address.touched && e.address.invalid">
+                Address must be at least 5 characters.
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Size (in sq m)</label>
+            <input type="text" class="form-control" formControlName="size" name="size" placeholder="e.g. 250" />
+            <div class="text-danger small" *ngIf="e.size.touched && e.size.invalid">
+                Size must be greater than 0.
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">GPS Coordinates</label>
+            <input type="text" class="form-control" formControlName="gps" name="gps"
+                placeholder="e.g. 9.0765, 7.3986" />
+
+            <div class="text-danger small" *ngIf="e.size.touched && e.size.invalid">
+                GPS is required.
+            </div>
+
+
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Status</label>
+            <select class="form-select" formControlName="status">
+                <option value="" disabled>Select status</option>
+                <option value="1">Active</option>
+                <option value="0">Inactive</option>
+
+            </select>
+            <div class="text-danger small" *ngIf="e.status.touched && e.status.invalid">
+                Status is required.
+            </div>
+        </div>
+
+        <div class="mb-4">
+            <label class="form-label">Price (₦)</label>
+            <input type="number" class="form-control" formControlName="price" placeholder="Enter price" />
+            <div class="text-danger small" *ngIf="e.price.touched && e.price.invalid">
+                Price must be 0 or higher.
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100" [disabled]="loading">
+            <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
+            {{ loading ? 'Saving...' : 'Update' }}
+        </button>
+    </form>
+
+
+
+    <div class="text-center mt-3">
+        <small class="text-success">{{ message }}</small>
+    </div>
+
+  
+   
+
+
+    <hr />
+    <button class="text-end" (click)="closeEdit()">Close</button>
+</dialog>
