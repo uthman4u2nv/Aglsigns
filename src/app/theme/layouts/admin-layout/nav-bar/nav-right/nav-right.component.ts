@@ -80,7 +80,7 @@ export class NavRightComponent {
   async GetLoggedInUser() {
     let n = '';
     this.user = await this.supabase.getUser();
-    alert('User Details:' + JSON.stringify(this.user));
+    //alert('User Details:' + JSON.stringify(this.user));
     n = this.user.user_metadata.full_name;
     if (n != '') {
       this.name = this.user.user_metadata.full_name;
