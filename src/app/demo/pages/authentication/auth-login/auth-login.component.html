@@ -9,7 +9,7 @@
           <div class="d-flex justify-content-between align-items-end mb-4">
             
             <h3 class="mb-0"><b>Login</b></h3>
-            <a [routerLink]="['/register']" class="link-primary">Don't have an account?</a>
+            <!--<a [routerLink]="['/register']" class="link-primary">Don't have an account?</a>-->
           </div>
           <div class="form-group mb-3">
             <label class="form-label" for="email">Email Address</label>
@@ -20,21 +20,21 @@
             <input type="password" [(ngModel)]="password" class="form-control" id="password" placeholder="Password" value="123456789" />
           </div>
           <div class="d-flex mt-1 justify-content-between">
-            <div class="form-check">
+            <!--<div class="form-check">
               <input class="form-check-input input-primary" type="checkbox" id="customCheckc1" checked="" />
               <label class="form-check-label text-muted" for="customCheckc1">Keep me sign in</label>
-            </div>
-            <h5 class="text-secondary f-w-400"><a href="javascript:">Forgot Password?</a></h5>
+            </div>-->
+            <!--<h5 class="text-secondary f-w-400"><a href="javascript:">Forgot Password?</a></h5>-->
           </div>
           <div class="d-grid mt-4">
             <button type="button" class="btn btn-primary" (click)="login()">Login</button>
             <p class="text-center" style="color: red;">{{ message }}</p>
           </div>
-          <div class="saprator mt-3">
+          <!--<div class="saprator mt-3">
             <span>Login with</span>
-          </div>
+          </div>-->
           <div class="row">
-            @for (item of SignInOptions; track item) {
+           <!-- @for (item of SignInOptions; track item) {
               <div class="col-4">
                 <div class="d-grid">
                   <button type="button" class="btn mt-2 btn-light-primary bg-light text-muted">
@@ -44,11 +44,11 @@
                 </div>
               </div>
             }
-            <!--<button (click)="loginWithGoogle()">Sign in with Google</button>-->
+            <button (click)="loginWithGoogle()">Sign in with Google</button>
               <button (click)="loginWithGoogle()" class="btn btn-outline-primary w-100 mt-2">
                 <img src="https://developers.google.com/identity/images/g-logo.png" width="20" class="me-2" />
                 Sign in with Google
-              </button>
+              </button>-->
           </div>
         </div>
       </div>

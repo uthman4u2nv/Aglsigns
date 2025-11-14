@@ -91,7 +91,7 @@ export class NavRightComponent {
     }
   }
 
-  profile = [
+  /*profile = [
     {
       icon: 'edit',
       title: 'Edit Profile'
@@ -135,7 +135,9 @@ export class NavRightComponent {
       icon: 'unordered-list',
       title: 'History'
     }
-  ];
+  ];*/
+  profile = [];
+  setting = [];
   async Logout() {
     // eslint-disable-next-line no-empty
 
