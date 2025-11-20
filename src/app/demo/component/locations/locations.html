@@ -21,6 +21,7 @@
                                     <th>GPS</th>
                                     <th class="text-end">PRICE</th>
                                     <th class="text-end">STATUS</th>
+                                    <th>ACTION</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -46,8 +47,8 @@
                                             {{ s.gps }}
                                         </span>
                                     </td>
-                                    <td class="text-end">{{ s.price | currency:'N'}}</td>
-                                    <td class="text-end">
+                                    <td class="text-center">{{ s.price | currency:'N'}}</td>
+                                    <td class="text-center">
                                         @if(s.status===1){
                                         <div style="background-color: green !important;color: white; padding: 5px;">Available</div>
                                         }
@@ -58,6 +59,12 @@
                                         <div style="background-color: yellow !important;color: black; padding: 5px;">Occupied</div>
                                         }
                     
+                                    </td>
+                                    <td>
+                                        @if(s.status===1){
+                                        <a href="javascript:" (click)="OpenAddReservation(s.sitename,s.address,s.size,s.gps,s.price,s.status,s.siteid)"
+                                        class="text-muted">Make Reservations</a>
+                                        }
                                     </td>
                                 </tr>
                                 }
@@ -239,4 +246,227 @@
 
     <hr />
     <button class="text-end" (click)="closeEdit()">Close</button>
+</dialog>
+
+<dialog id="dialog" #addmodal>
+    <h4 class="text-center text-primary mb-4 fw-semibold">
+       Make Reservations: {{locationname}}
+    </h4>
+    @if(success){
+    <div class="text-center mt-3">
+        <small class="text-success">{{ message }}</small>
+    </div>
+}
+@if(failed){
+    <div class="text-center mt-3">
+        <small class="text-danger">{{ message }}</small>
+    </div>
+}
+    <form [formGroup]="bookingsForm" (ngSubmit)="makeReservation()">
+        <div class="mb-3">
+            <label class="form-label">Customer Name</label>
+            <select class="form-select" formControlName="customerID">
+                <option value="" disabled>Select Customer</option>
+                @for (c of customers; track c; let i=$index) {
+                <option value="{{c.customerID}}">{{c.name}}</option>
+                }              
+            
+            </select>
+            
+            <div class="text-danger small" *ngIf="g.customerID.touched && g.customerID.invalid">
+                Select a customer.
+            </div>
+        </div>
+
+       
+
+        <div class="mb-3">
+            <label class="form-label">Price</label>
+            <input type="number" class="form-control" formControlName="price" name="price"  />
+            <div class="text-danger small" *ngIf="g.price.touched && g.price.invalid">
+                Location Price must be greater than 0.
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Agreed Price</label>
+            <input type="number" class="form-control" formControlName="agreedprice" name="agreedprice"
+                 />
+
+            <div class="text-danger small" *ngIf="g.agreedprice.touched && g.agreedprice.invalid">
+                Price is required.
+            </div>
+
+
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Paid</label>
+            <input type="number" class="form-control" formControlName="paid" name="paid" />
+        
+            <div class="text-danger small" *ngIf="g.agreedprice.touched && g.agreedprice.invalid">
+                Amount Paid is required.
+            </div>
+        
+        
+        </div>
+<div class="mb-3">
+    <label class="form-label">Start Date</label>
+    <input type="date" class="form-control" formControlName="startDate" name="startDate" />
+
+    <div class="text-danger small" *ngIf="g.startDate.touched && g.startDate.invalid">
+        Start Date is required.
+    </div>
+
+
+</div>
+<div class="mb-3">
+    <label class="form-label">End Date</label>
+    <input type="date" class="form-control" formControlName="endDate" name="endDate" />
+
+    <div class="text-danger small" *ngIf="g.endDate.touched && g.endDate.invalid">
+        End Date is required.
+    </div>
+
+
+</div>
+<div class="mb-3">
+    <label class="form-label">Payment Method</label>
+    <select class="form-select" formControlName="paymentMethod">
+        <option value="" disabled>Select Payment Method</option>
+        @for (p of paymentmethods; track p; let i=$index) {
+        <option value="{{p.id}}">{{p.name}}</option>
+        }
+
+    </select>
+
+    <div class="text-danger small" *ngIf="g.paymentMethod.touched && g.paymentMethod.invalid">
+        Select Payment Method.
+    </div>
+</div>
+<div class="mb-3">
+    <label class="form-label">Select Payment Proof</label>
+    <input type="file" (change)="onFileSelected($event)" />
+    <div *ngIf="uploadedUrl">
+        <p>Uploaded File:</p>
+        <a [href]="uploadedUrl" target="_blank">{{ uploadedUrl }}</a>
+        <img *ngIf="uploadedUrl" [src]="uploadedUrl" width="200" />
+    </div>
+</div>
+
+
+
+        <button type="submit" class="btn btn-primary w-100" [disabled]="loading">
+            <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
+            {{ loading ? 'Saving...' : 'Book' }}
+        </button>
+    </form>
+
+
+
+    <div class="text-center mt-3">
+        <small class="text-success">{{ message }}</small>
+    </div>
+
+
+
+
+
+    <hr />
+    <button class="text-end" (click)="closeAddReservation()">Close</button>
+</dialog>
+<dialog id="dialog" #receiptmodal>
+    <h4 class="text-center text-primary mb-4 fw-semibold">
+       OFFICIAL RECEIPT
+    </h4>
+    <hr />
+    <div class="receipt-wrap">
+        <div class="card">
+            <div class="card-header">
+                <div class="logo" aria-hidden="true">
+                    <!-- local logo path you uploaded -->
+                    <img src="../../../../assets/images/agllogo.png" alt="AGL Signs Logo" />
+                </div>
+    
+                <div class="company">
+                    <h1>AGL Signs Ltd</h1>
+                    <p>Murg Plaza, Aea 10, Garki, Abuja<br />Email: info&#64;aglsins.com.ng·
+                        Phone: +234 803 251 8766</p>
+                </div>
+    
+                <div class="meta" role="status" aria-label="receipt summary">
+                    <div class="tag">RECEIPT</div>
+                    <p style="margin-top:10px"><strong>Receipt #</strong> <span
+                            style="display:block;font-weight:700;color:var(--text)">{{transID}}</span></p>
+                    <p><strong>Date</strong> <br /><span style="display:block">{{transDate | date:'medium'}}</span></p>
+                </div>
+            </div>
+    
+            <div class="card-body">
+                <div class="bill-to">
+                    <div class="bill-item">
+                        <h3>Bill To</h3>
+                        <p><strong>{{customerName}}</strong><br />{{customerAddress}}<br />{{customerEmail}}<br />{{customerPhone}}
+                        </p>
+                    </div>
+    
+                    <div class="bill-item" style="text-align:right;">
+                        <h3>Payment Method</h3>
+                        <p>{{methodName}}
+                            <br />Transaction: <span style="font-weight:700">TRX-987654</span></p>
+                        <p style="margin-top:10px"><strong>Due Date</strong><br />{{transDate | date:'medium'}}</p>
+                    </div>
+                </div>
+    
+                <table class="items" aria-labelledby="items-heading">
+                    <thead>
+                        <tr>
+                            <th>Item / Description</th>
+                            <th class="qty">Qty</th>
+                            
+                            <th class="line-total">Line Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Payment for Advert — {{locationname}} from {{startDate}} - {{endDate}}</td>
+                            <td class="qty">1</td>
+                            
+                            <td class="line-total">{{totalPaid | currency:'₦'}}</td>
+                        </tr>
+                    
+                    </tbody>
+                </table>
+    
+                <div class="totals" aria-hidden="true">
+                    <div class="totals-table" role="table" aria-label="totals">
+                        <div class="row"><span>Total Amount </span><strong>{{totalAmount | currency:'₦'}}</strong></div>
+                        <div class="row"><span>Total Paid</span><span>{{totalPaid | currency:'₦'}}</span></div>
+                        <div class="row"><span>Balance</span><span>{{totalBalance | currency:'₦'}}</span></div>
+                        <div class="row total"><span>Total Paid</span><span>{{totalPaid | currency:'₦'}}</span></div>
+                    </div>
+                </div>
+    
+                <div class="notes">
+                    <strong>Notes:</strong>
+                    <p>Thank you for your business. This receipt confirms payment received for Advert at — {{locationname}} from {{startDate}} - {{endDate}}.
+                        Refunds are subject to our terms and conditions. Contact support at
+                        info&#64;aglsigns.com.ng for inquiries.</p>
+                </div>
+            </div>
+    
+            <div class="footer">
+                <div>
+                    <strong>Invoice ID:</strong> {{transID}}<br />
+                    <small style="color:var(--muted)">Powered by C-Digitech Solutions Ltd</small>
+                </div>
+                <div>
+                    <small style="color:var(--muted)">Prepared on <!-- JS will fill --> <span
+                            id="preparedOn"></span></small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <button class="btn btn-primary text-end" (click)="closeReceipt()">Close</button>
+    <hr />
 </dialog>

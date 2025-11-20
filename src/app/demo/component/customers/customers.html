@@ -321,3 +321,89 @@
     <hr />
     <button class="btn btn-primary text-end" (click)="closeViewReserve()">Close</button>
 </dialog>
+
+<dialog id="dialog" #makereservations>
+    <h4 class="text-center text-primary mb-4 fw-semibold">
+        Make Reservations: {{customerName}}
+    </h4>
+    <hr />
+<form [formGroup]="editCustomerForm" (ngSubmit)="updateForm()">
+    <div class="mb-3">
+        <label class="form-label">Site Name</label>
+        <input type="text" class="form-control" formControlName="name" name="name" placeholder="Enter site name" />
+        <div class="text-danger small" *ngIf="e.name.touched && e.name.invalid">
+            Customer name is required.
+        </div>
+    </div>
+   
+
+    <div class="mb-3">
+        <label class="form-label">Address</label>
+        <textarea class="form-control" formControlName="address" name="address" rows="2"
+            placeholder="Enter full address"></textarea>
+        <div class="text-danger small" *ngIf="e.address.touched && e.address.invalid">
+            Address must be at least 5 characters.
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Email</label>
+        <input type="email" class="form-control" formControlName="email" name="email" placeholder="info@gmail.com" />
+        <div class="text-danger small" *ngIf="e.email.touched && e.email.invalid">
+            Invalid Email
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Phone</label>
+        <input type="tel" class="form-control" formControlName="phone" name="phone" placeholder="" />
+
+        <div class="text-danger small" *ngIf="e.phone.touched && e.phone.invalid">
+            Phone is required.
+        </div>
+
+
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Contact Person</label>
+        <input type="text" class="form-control" formControlName="contactPerson" name="contactPerson" placeholder="" />
+
+        <div class="text-danger small" *ngIf="e.contactPerson.touched && e.contactPerson.invalid">
+            Contact Person is required.
+        </div>
+
+
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Status</label>
+        <select class="form-select" formControlName="status">
+            <option value="" disabled>Select status</option>
+            <option value="1">Active</option>
+            <option value="0">Inactive</option>
+
+        </select>
+        <div class="text-danger small" *ngIf="e.status.touched && e.status.invalid">
+            Status is required.
+        </div>
+    </div>
+
+
+
+    <button type="submit" class="btn btn-primary w-100" [disabled]="loading">
+        <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
+        {{ loading ? 'Saving...' : 'Update' }}
+    </button>
+</form>
+
+
+
+
+
+
+
+
+
+    <hr />
+    <button class="btn btn-primary text-end" (click)="closeMakeReserve()">Close</button>
+</dialog>

@@ -30,6 +30,7 @@ export class Dashboard {
   updatecustomerurl = 'https://jfdnxpajjpginywtzlwu.supabase.co/rest/v1/customers?customerID=eq.';
   viewreservationsurl = 'https://jfdnxpajjpginywtzlwu.supabase.co/rest/v1/bookings?customerID=eq.';
   updatereservationsstatusurl = 'https://jfdnxpajjpginywtzlwu.supabase.co/rest/v1/bookings?bookingsID=eq.';
+  allpaymentmethodsurl = 'https://jfdnxpajjpginywtzlwu.supabase.co/rest/v1/paymentMethod?status=eq.1';
 
   // eslint-disable-next-line @angular-eslint/prefer-inject
   constructor(
@@ -58,6 +59,9 @@ export class Dashboard {
   }
   ReturnAllCustomers(): Observable<AllCustomersResp[]> {
     return this.http.get<AllCustomersResp[]>(this.allcustomersurl, { responseType: 'json', headers: this.headers });
+  }
+  ReturnAllPaymentMethods(): Observable<allPaymentMethodResp[]> {
+    return this.http.get<allPaymentMethodResp[]>(this.allpaymentmethodsurl, { responseType: 'json', headers: this.headers });
   }
 
   addLocation(data: LocationReq): Observable<{ status: number }> {
@@ -177,6 +181,14 @@ interface LocationReq {
 
 interface CountResultResp {
   count: number;
+}
+
+interface allPaymentMethodResp {
+  id: number;
+  created_at: string;
+  paymentID: string;
+  name: string;
+  status: number;
 }
 
 interface allSiteResp {

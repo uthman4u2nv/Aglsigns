@@ -46,6 +46,7 @@ export class Customers {
   @ViewChild('modal') modal!: ElementRef<HTMLDialogElement>;
   @ViewChild('editmodal') editmodal!: ElementRef<HTMLDialogElement>;
   @ViewChild('viewreservations') viewreservemodal!: ElementRef<HTMLDialogElement>;
+  @ViewChild('makereservations') makereservemodal!: ElementRef<HTMLDialogElement>;
 
   constructor(
     // eslint-disable-next-line @angular-eslint/prefer-inject
@@ -80,6 +81,9 @@ export class Customers {
     this.customerName = name;
     this.viewreservemodal.nativeElement.showModal();
     this.reservations = await this.supabase.getBookingsByCustomer(customerID);
+  }
+  async OpenAddReservations() {
+    this.makereservemodal.nativeElement.showModal();
   }
   get f() {
     return this.customerForm.controls;
@@ -167,7 +171,7 @@ export class Customers {
         data.status = 1;
       }
 
-      alert('Data:' + JSON.stringify(data) + 'Booking ID:' + bookingID + ' CustomerID:' + customerID);
+      //alert('Data:' + JSON.stringify(data) + 'Booking ID:' + bookingID + ' CustomerID:' + customerID);
       this.ds.updateReservationStatus(data, bookingID).subscribe({
         next: async (res) => {
           this.reservations = await this.supabase.getBookingsByCustomer(customerID);
@@ -189,5 +193,8 @@ export class Customers {
   }
   closeViewReserve() {
     this.viewreservemodal.nativeElement.close();
+  }
+  closeMakeReserve() {
+    this.makereservemodal.nativeElement.close();
   }
 }

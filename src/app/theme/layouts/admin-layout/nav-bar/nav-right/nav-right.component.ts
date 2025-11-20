@@ -85,6 +85,7 @@ export class NavRightComponent {
     if (n != '') {
       this.name = this.user.user_metadata.full_name;
       this.photo = this.user.user_metadata.avatar_url;
+      localStorage.setItem('email', this.user.email);
     } else {
       this.name = this.user.email;
       this.photo = 'assets/images/user/avatar-2.jpg';
