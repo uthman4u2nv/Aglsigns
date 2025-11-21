@@ -131,6 +131,26 @@ export class SupabaseService {
     //console.log('Fetched joined data:', data);
     return data;
   }
+  async PayReservations(d: PayReservationReq) {
+    //bookingID text,
+
+    const { data, error } = await this.supabase.rpc('payreservations', {
+      bookingid: d.bookingID,
+      amount: d.amount,
+      enterid: d.enteredBy,
+      paymentmethod: d.paymentMethod
+    });
+    console.log('Data returned:' + JSON.stringify(data));
+    if (error) {
+      console.error('Supabase RPC Error:', error);
+
+      throw error;
+      return 0;
+    }
+
+    //console.log('Fetched joined data:', data);
+    return data;
+  }
 
   async uploadFile(file: File, path: string) {
     const { data, error } = await this.supabase.storage.from(this.bucket).upload(path, file, {
@@ -177,6 +197,13 @@ interface MakeBookingsReq {
   balance: number;
   startDate: string;
   endDate: string;
+  enteredBy: string;
+  paymentMethod: number;
+}
+
+interface PayReservationReq {
+  bookingID: string;
+  amount: number;
   enteredBy: string;
   paymentMethod: number;
 }

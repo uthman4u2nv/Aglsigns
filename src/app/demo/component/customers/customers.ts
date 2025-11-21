@@ -14,6 +14,31 @@ import { SupabaseService } from 'src/app/services/supabase';
 export class Customers {
   customers = [];
   reservations: any = [];
+  locationname = '';
+  paymentmethods = [];
+  paymentmethod = 0;
+  bookingID = '';
+  customerID = '';
+  methodName = '';
+  '';
+  transID = '';
+  transDate = '';
+  customerName = '';
+  customerAddress = '';
+  customerEmail = '';
+  customerPhone = '';
+  startDate = '';
+  endDate = '';
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  base64: any = '';
+  totalAmount = 0;
+  totalPaid = 0;
+  totalBalance = 0;
+  selectedFile!: File;
+  uploadedUrl = '';
+  display: boolean = false;
+  success: boolean = false;
+  failed: boolean = false;
   site = {
     name: '',
     address: '',
@@ -25,7 +50,7 @@ export class Customers {
 
   loading = false;
   message = '';
-  customerName = '';
+
   customerForm = this.fb.group({
     name: ['', Validators.required],
     address: ['', [Validators.required, Validators.minLength(5)]],
@@ -43,16 +68,24 @@ export class Customers {
     customerID: [null, [Validators.required]]
   });
 
+  payReservationForm = this.fb.group({
+    amount: [null, [Validators.required, Validators.min(1)]],
+    paymentMethod: [null, [Validators.required, Validators.min(1)]]
+  });
+
   @ViewChild('modal') modal!: ElementRef<HTMLDialogElement>;
   @ViewChild('editmodal') editmodal!: ElementRef<HTMLDialogElement>;
   @ViewChild('viewreservations') viewreservemodal!: ElementRef<HTMLDialogElement>;
   @ViewChild('makereservations') makereservemodal!: ElementRef<HTMLDialogElement>;
+  @ViewChild('payforreservations') payreservemodal!: ElementRef<HTMLDialogElement>;
+  @ViewChild('receiptmodal') receiptmodal!: ElementRef<HTMLDialogElement>;
 
   constructor(
     // eslint-disable-next-line @angular-eslint/prefer-inject
     private ds: Dashboard,
     // eslint-disable-next-line @angular-eslint/prefer-inject
     private fb: FormBuilder,
+    // eslint-disable-next-line @angular-eslint/prefer-inject
     private supabase: SupabaseService
   ) {
     this.ReturnallCustomers();
@@ -61,6 +94,108 @@ export class Customers {
     this.ds.ReturnAllCustomers().subscribe((d) => {
       this.customers = d;
     });
+  }
+  ReturnPaymentMethods() {
+    this.ds.ReturnAllPaymentMethods().subscribe((d) => {
+      this.paymentmethods = d;
+    });
+  }
+  closeReceipt() {
+    this.receiptmodal.nativeElement.close();
+  }
+  onFileSelected(event: any) {
+    this.selectedFile = event.target.files[0];
+    const file = event.target.files[0];
+
+    const reader = new FileReader();
+
+    reader.readAsDataURL(file);
+
+    reader.onloadend = async () => {
+      this.base64 = reader.result;
+      //this.ApplyObj.invoice = this.base64;
+      this.uploadedUrl = this.base64;
+    };
+  }
+  async upload(transID: string) {
+    if (!this.selectedFile) return;
+
+    const filePath = `uploads/${transID}-${this.selectedFile.name}`;
+
+    await this.supabase.uploadFile(this.selectedFile, filePath);
+
+    this.uploadedUrl = await this.supabase.getPublicUrl(filePath);
+  }
+  async payReservation() {
+    //alert('Am inside');
+    /**if (this.bookingsForm.invalid) {
+      this.bookingsForm.markAllAsTouched();
+      alert('Error encountered');
+      return;
+    }*/
+    //alert('Am inside
+    if (window.confirm('Are you sure you want to proceed?')) {
+      this.loading = true;
+      const data = {
+        bookingID: this.bookingID || '',
+
+        amount: this.payReservationForm.value.amount || 0,
+
+        enteredBy: localStorage.getItem('email'),
+        paymentMethod: this.payReservationForm.value.paymentMethod || 0
+      };
+
+      const result = await this.supabase.PayReservations(data);
+
+      if (result != null) {
+        //alert('Payment Methods:' + data.paymentMethod + ' All' + JSON.stringify(this.paymentmethods));
+        //alert('Results:  All' + JSON.stringify(result));
+
+        this.totalPaid = data.amount;
+
+        this.methodName = this.paymentmethods.find((m) => m.id === data.paymentMethod)?.name;
+        this.customerName = this.customers.find((m) => m.customerID === this.customerID)?.name;
+        this.customerAddress = this.customers.find((m) => m.customerID === this.customerID)?.address;
+        this.customerEmail = this.customers.find((m) => m.customerID === this.customerID)?.email;
+        this.customerPhone = this.customers.find((m) => m.customerID === this.customerID)?.phone;
+        this.transDate = result[0].created_at;
+        this.message = 'Booking successfull';
+        this.success = true;
+        await this.upload(result[0].transid);
+        this.reservations = await this.supabase.getBookingsByCustomer(this.customerID);
+        this.payreservemodal.nativeElement.close();
+        this.receiptmodal.nativeElement.showModal();
+        this.transID = result[0].transid;
+      } else {
+        this.message = 'Booking Failed';
+
+        this.failed = true;
+      }
+      this.loading = false;
+    }
+  }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  onPrint(divName: any) {
+    const printContents = document.getElementById(divName).innerHTML;
+    const originalContents = document.body.innerHTML;
+    document.body.innerHTML = printContents;
+    window.print();
+    document.body.innerHTML = originalContents;
+  }
+  handleUpload(event: any) {
+    const file = event.target.files[0];
+
+    const reader = new FileReader();
+
+    reader.readAsDataURL(file);
+
+    reader.onloadend = async () => {
+      this.base64 = reader.result;
+      //this.ApplyObj.invoice = this.base64;
+    };
+  }
+  get g() {
+    return this.payReservationForm.controls;
   }
   OpenLocationDetails() {
     this.modal.nativeElement.showModal();
@@ -84,6 +219,16 @@ export class Customers {
   }
   async OpenAddReservations() {
     this.makereservemodal.nativeElement.showModal();
+  }
+  async openPayReservation(amount, bookingsID, customerID) {
+    this.payreservemodal.nativeElement.showModal();
+    this.viewreservemodal.nativeElement.close();
+    this.bookingID = bookingsID;
+    this.customerID = customerID;
+    this.payReservationForm.patchValue({
+      amount: amount
+    });
+    this.ReturnPaymentMethods();
   }
   get f() {
     return this.customerForm.controls;

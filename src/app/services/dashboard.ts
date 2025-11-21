@@ -31,10 +31,14 @@ export class Dashboard {
   viewreservationsurl = 'https://jfdnxpajjpginywtzlwu.supabase.co/rest/v1/bookings?customerID=eq.';
   updatereservationsstatusurl = 'https://jfdnxpajjpginywtzlwu.supabase.co/rest/v1/bookings?bookingsID=eq.';
   allpaymentmethodsurl = 'https://jfdnxpajjpginywtzlwu.supabase.co/rest/v1/paymentMethod?status=eq.1';
+  alltransactionsurl =
+    'https://jfdnxpajjpginywtzlwu.supabase.co/rest/v1/transactions?select=*,bookings(*,customers(*))&order=created_at.desc';
 
   // eslint-disable-next-line @angular-eslint/prefer-inject
   constructor(
+    // eslint-disable-next-line @angular-eslint/prefer-inject
     private http: HttpClient,
+    // eslint-disable-next-line @angular-eslint/prefer-inject
     private supabase: SupabaseService
   ) {}
 
@@ -62,6 +66,11 @@ export class Dashboard {
   }
   ReturnAllPaymentMethods(): Observable<allPaymentMethodResp[]> {
     return this.http.get<allPaymentMethodResp[]>(this.allpaymentmethodsurl, { responseType: 'json', headers: this.headers });
+  }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  ReturnAllTransactions(): Observable<any[]> {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return this.http.get<any[]>(this.alltransactionsurl, { responseType: 'json', headers: this.headers });
   }
 
   addLocation(data: LocationReq): Observable<{ status: number }> {

@@ -346,11 +346,16 @@
 <div class="mb-3">
     <label class="form-label">Select Payment Proof</label>
     <input type="file" (change)="onFileSelected($event)" />
-    <div *ngIf="uploadedUrl">
+    @if(uploadedUrl){
+    <p>Uploaded File:</p>
+    
+    <img [src]="base64" width="200" />
+    }
+    <!--<div *ngIf="uploadedUrl">
         <p>Uploaded File:</p>
         <a [href]="uploadedUrl" target="_blank">{{ uploadedUrl }}</a>
         <img *ngIf="uploadedUrl" [src]="uploadedUrl" width="200" />
-    </div>
+    </div>-->
 </div>
 
 
@@ -379,7 +384,7 @@
        OFFICIAL RECEIPT
     </h4>
     <hr />
-    <div class="receipt-wrap">
+    <div class="receipt-wrap" id="receipt-wrap">
         <div class="card">
             <div class="card-header">
                 <div class="logo" aria-hidden="true">
@@ -467,6 +472,7 @@
         </div>
     </div>
 
-    <button class="btn btn-primary text-end" (click)="closeReceipt()">Close</button>
+    <button class="btn btn-primary text-end" (click)="closeReceipt()">Close</button> &nbsp;
+    <button class="btn btn-success" (click)="onPrint('receipt-wrap')">Print</button>
     <hr />
 </dialog>

@@ -63,9 +63,7 @@
 
                                     </td>
                                     <td><a href="javascript:" (click)="OpenResevations(c.name,c.customerID)"
-                                        class="text-muted">View Reservations</a> | 
-                                        <a href="javascript:" (click)="OpenEdit(c.name,c.address,c.email,c.phone,c.contactPerson,c.status,c.customerID)"
-                                            class="text-muted">Make Reservations</a>
+                                        class="text-muted">View Reservations</a>
                                     
                                     </td>
                                 </tr>
@@ -300,9 +298,11 @@
 
 
             </td>
-            <td><a href="javascript:" (click)="updateBookingStatus(r.status,r.bookingsID,r.customerID)" class="bg bg-success text-white p-2">Update</a> |
-                <a href="javascript:" (click)="updateBookingStatus(r.status,r.bookingsID,r.customerID)" class="bg bg-success text-white p-2">Pay</a>
-               
+            <td><a href="javascript:" (click)="updateBookingStatus(r.status,r.bookingsID,r.customerID)" class="bg bg-success text-white p-2">Update</a> 
+                @if(r.balance > 0){
+                |
+                <a href="javascript:" (click)="openPayReservation(r.balance,r.bookingsID,r.customerID)" class="bg bg-success text-white p-2">Pay</a>
+                }
             </td>
         </tr>
         }
@@ -406,4 +406,170 @@
 
     <hr />
     <button class="btn btn-primary text-end" (click)="closeMakeReserve()">Close</button>
+</dialog>
+
+<dialog id="dialog" #payforreservations>
+<h4 class="text-center text-primary mb-4 fw-semibold">
+    Make Payment
+</h4>
+
+<form [formGroup]="payReservationForm" (ngSubmit)="payReservation()">
+    
+    <div class="mb-3">
+        <label class="form-label">Amount Paid</label>
+        <input type="number" class="form-control" formControlName="amount" name="paid" />
+
+        <div class="text-danger small" *ngIf="g.amount.touched && g.amount.invalid">
+            Amount Paid is required.
+        </div>
+
+
+    </div>
+    
+    <div class="mb-3">
+        <label class="form-label">Payment Method</label>
+        <select class="form-select" formControlName="paymentMethod">
+            <option value="" disabled>Select Payment Method</option>
+            @for (p of paymentmethods; track p; let i=$index) {
+            <option value="{{p.id}}">{{p.name}}</option>
+            }
+
+        </select>
+
+        <div class="text-danger small" *ngIf="g.paymentMethod.touched && g.paymentMethod.invalid">
+            Select Payment Method.
+        </div>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Select Payment Proof</label>
+        <!--<input type="file" id="invoice" name="invoice" accept="image/*" required #invoice="ngModel"
+            [(ngModel)]="ApplyObj.invoice" (change)="handleUpload($event)" class="form-control" required />-->
+        <input type="file" (change)="onFileSelected($event)" />
+        @if(uploadedUrl){
+<p>Uploaded File:</p>
+
+<img  [src]="base64" width="200" />
+        }
+     
+    </div>
+
+
+
+    <button type="submit" class="btn btn-primary w-100" [disabled]="loading">
+        <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
+        {{ loading ? 'Saving...' : 'Make Payment' }}
+    </button>
+</form>
+
+
+
+<div class="text-center mt-3">
+    <small class="text-success">{{ message }}</small>
+</div>
+
+
+
+
+
+<hr />
+<button class="btn btn-primary text-end" (click)="closeEdit()">Close</button>
+</dialog>
+
+<dialog id="dialog" #receiptmodal>
+    <h4 class="text-center text-primary mb-4 fw-semibold">
+        OFFICIAL RECEIPT
+    </h4>
+    <hr />
+    <div class="receipt-wrap" id="receipt-wrap">
+        <div class="card">
+            <div class="card-header">
+                <div class="logo" aria-hidden="true">
+                    <!-- local logo path you uploaded -->
+                    <img src="../../../../assets/images/agllogo.png" alt="AGL Signs Logo" />
+                </div>
+
+                <div class="company">
+                    <h1>AGL Signs Ltd</h1>
+                    <p>Murg Plaza, Aea 10, Garki, Abuja<br />Email: info&#64;aglsins.com.ng·
+                        Phone: +234 803 251 8766</p>
+                </div>
+
+                <div class="meta" role="status" aria-label="receipt summary">
+                    <div class="tag">RECEIPT</div>
+                    <p style="margin-top:10px"><strong>Receipt #</strong> <span
+                            style="display:block;font-weight:700;color:var(--text)">{{transID}}</span></p>
+                    <p><strong>Date</strong> <br /><span style="display:block">{{transDate | date:'medium'}}</span></p>
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="bill-to">
+                    <div class="bill-item">
+                        <h3>Bill To</h3>
+                        <p><strong>{{customerName}}</strong><br />{{customerAddress}}<br />{{customerEmail}}<br />{{customerPhone}}
+                        </p>
+                    </div>
+
+                    <div class="bill-item" style="text-align:right;">
+                        <h3>Payment Method</h3>
+                        <p>{{methodName}}
+                            <br />Transaction: <span style="font-weight:700">TRX-987654</span>
+                        </p>
+                        <p style="margin-top:10px"><strong>Due Date</strong><br />{{transDate | date:'medium'}}</p>
+                    </div>
+                </div>
+
+                <table class="items" aria-labelledby="items-heading">
+                    <thead>
+                        <tr>
+                            <th>Item / Description</th>
+                            <th class="qty">Qty</th>
+
+                            <th class="line-total">Line Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Balance Paid for Advert  </td>
+                            <td class="qty">1</td>
+
+                            <td class="line-total">{{totalPaid | currency:'₦'}}</td>
+                        </tr>
+
+                    </tbody>
+                </table>
+
+                <div class="totals" aria-hidden="true">
+                    <div class="totals-table" role="table" aria-label="totals">
+                        <!--<div class="row"><span>Total Amount </span><strong>{{totalAmount | currency:'₦'}}</strong></div>
+                        <div class="row"><span>Total Paid</span><span>{{totalPaid | currency:'₦'}}</span></div>
+                        <div class="row"><span>Balance</span><span>{{totalBalance | currency:'₦'}}</span></div>-->
+                        <div class="row total"><span>Total Paid</span><span>{{totalPaid | currency:'₦'}}</span></div>
+                    </div>
+                </div>
+
+                <div class="notes">
+                    <strong>Notes:</strong>
+                    <p>Thank you for your business. This receipt confirms payment received for Advert 
+                        Refunds are subject to our terms and conditions. Contact support at
+                        info&#64;aglsigns.com.ng for inquiries.</p>
+                </div>
+            </div>
+
+            <div class="footer">
+                <div>
+                    <strong>Invoice ID:</strong> {{transID}}<br />
+                    <small style="color:var(--muted)">Powered by C-Digitech Solutions Ltd</small>
+                </div>
+                <div>
+                    <small style="color:var(--muted)">Prepared on <!-- JS will fill --> <span
+                            id="preparedOn"></span></small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <button class="btn btn-primary text-end" (click)="closeReceipt()">Close</button> &nbsp;
+    <button class="btn btn-success" (click)="onPrint('receipt-wrap')">Print</button>
+    <hr />
 </dialog>

@@ -6,6 +6,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { AdminComponent } from './theme/layouts/admin-layout/admin-layout.component';
 import { GuestLayoutComponent } from './theme/layouts/guest-layout/guest-layout.component';
 import { Customers } from './demo/component/customers/customers';
+import { Transactions } from './demo/component/transactions/transactions';
 
 import { authGuardGuard } from './services/auth-guard-guard';
 
@@ -34,6 +35,12 @@ const routes: Routes = [
         path: 'customers',
         canActivate: [authGuardGuard],
         loadComponent: () => import('./demo/component/customers/customers').then((c) => c.Customers)
+      },
+
+      {
+        path: 'transactions',
+        canActivate: [authGuardGuard],
+        loadComponent: () => import('./demo/component/transactions/transactions').then((c) => c.Transactions)
       },
       {
         path: 'typography',

@@ -61,13 +61,13 @@ export const NavigationItems: NavigationItem[] = [
     icon: 'icon-navigation',
     children: [
       {
-        id: 'login',
-        title: 'Manage Reservations',
+        id: 'transactions',
+        title: 'Transactions',
         type: 'item',
         classes: 'nav-item',
-        url: '/login',
+        url: '/transactions',
         icon: 'ant-design',
-        target: true,
+        target: false,
         breadcrumbs: false
       }
     ]

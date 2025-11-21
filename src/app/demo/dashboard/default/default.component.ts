@@ -35,6 +35,8 @@ import { GoogleMap, MapMarker } from '@angular/google-maps';
 })
 export class DefaultComponent {
   private iconService = inject(IconService);
+  trans = [];
+  totalPaid = 0;
   totalSites: number = 0;
   totalCustomers: number = 0;
   totalBookings: number = 0;
@@ -62,9 +64,17 @@ export class DefaultComponent {
     this.CountBookings();
     this.ReturnallSites();
     this.ReturnLast5Bookings();
+    this.ReturnAllTransactions();
   }
   get center() {
     return { lat: this.lat, lng: this.lng };
+  }
+  async ReturnAllTransactions() {
+    this.ds.ReturnAllTransactions().subscribe((d) => {
+      //alert('Transactions:' + JSON.stringify(d));
+      this.trans = d;
+      this.totalPaid = this.trans.reduce((sum, t) => sum + Number(t.amount), 0);
+    });
   }
   OpenLocationDetails(name, location, size, gps, price, status, date) {
     this.modal.nativeElement.showModal();

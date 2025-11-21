@@ -57,7 +57,7 @@
     <app-card [showHeader]="false" blockClass="dashboard-card">
       <h6 class="mb-2 f-w-400 text-muted">Total Transaction</h6>
       <h4 class="mb-3">
-        N29,700,000.00
+        {{totalPaid | currency:'N'}}
         <!--<span class="badge bg-light-primary border border-primary ">
           <i antIcon type="rise" theme="outline"></i>
           59.3%

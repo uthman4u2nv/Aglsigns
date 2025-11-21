@@ -28,6 +28,7 @@ export class Locations {
   startDate = '';
   endDate = '';
   totalAmount = 0;
+  base64: any = '';
   totalPaid = 0;
   totalBalance = 0;
   selectedFile!: File;
@@ -92,8 +93,22 @@ export class Locations {
     this.ReturnallSites();
   }
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  /*onFileSelected(event: any) {
+    this.selectedFile = event.target.files[0];
+  }*/
   onFileSelected(event: any) {
     this.selectedFile = event.target.files[0];
+    const file = event.target.files[0];
+
+    const reader = new FileReader();
+
+    reader.readAsDataURL(file);
+
+    reader.onloadend = async () => {
+      this.base64 = reader.result;
+      //this.ApplyObj.invoice = this.base64;
+      this.uploadedUrl = this.base64;
+    };
   }
   async upload(transID: string) {
     if (!this.selectedFile) return;
@@ -287,6 +302,14 @@ export class Locations {
   }
   closeReceipt() {
     this.receiptmodal.nativeElement.close();
+  }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  onPrint(divName: any) {
+    const printContents = document.getElementById(divName).innerHTML;
+    const originalContents = document.body.innerHTML;
+    document.body.innerHTML = printContents;
+    window.print();
+    document.body.innerHTML = originalContents;
   }
 }
 
